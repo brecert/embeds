@@ -110,6 +110,8 @@ export function generateHTML(data: camdo.ICamdoFormat) {
 					  flex-direction: column;
 					
 					  max-width: calc(80vmin - var(--color-bar-width));
+
+					  white-space: pre;
 					}
 
 					.embed > div {
