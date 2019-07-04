@@ -2,7 +2,6 @@ import getAll, { oldGetAll } from '../util/getAll'
 import CommandClient from 'camdo'
 import * as camdo from 'camdo'
 
-
 export default function(client: CommandClient) {
 	const neko_list = [
 	  "pat",
@@ -39,7 +38,7 @@ export default function(client: CommandClient) {
 	    description: "The type of neko you wish to display",
 	    type: "neko",
 	    default_value: "neko",
-	    capture: true,
+	    fail_message: `The 'neko' argument accepts ${client.types.get('neko')!.display}`,
 	    required: false
 	  }],
 	  async run([neko_type]: [string]) {
@@ -50,6 +49,8 @@ export default function(client: CommandClient) {
 	    	],
 	    	{ json: true }
 	    )
+
+			console.log(neko_type, img)
 
   		return {
 	      title: cat.cat,
