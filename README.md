@@ -49,3 +49,4 @@ npm run start # or yarn start
 - add an urban dictionary command
 - define feature sets for each of the commands (waiting for camdo to add this)
 - add more handlers
+- move to redis for caching eventually
