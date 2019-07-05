@@ -189,8 +189,9 @@ export default function(client: CommandClient) {
 		},
 		send(data, res: http.ServerResponse & restana.ResponseExtensions, req: http.IncomingMessage & restana.RequestExtensions) {
 			let key = responseCache.getKey(req.url!)
-
-			if(key === undefined) {
+			
+			// if the url hasn't be set yet and the url has a query and should be cached then cache the result
+			if(key === undefined && Object.keys((req as any).query).length !== 0) {
 				responseCache.setKey(req.url!, data)
 			}
 
