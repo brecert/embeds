@@ -189,7 +189,7 @@ export default function(client: CommandClient) {
 		},
 		send(data, res: http.ServerResponse & restana.ResponseExtensions, req: http.IncomingMessage & restana.RequestExtensions) {
 			let key = responseCache.getKey(req.url!)
-			
+
 			// if the url hasn't be set yet and the url has a query and should be cached then cache the result
 			if(key === undefined && Object.keys((req as any).query).length !== 0) {
 				responseCache.setKey(req.url!, data)
@@ -199,8 +199,10 @@ export default function(client: CommandClient) {
 		}
 	})
 
-	service.start(3000).then(()=> {
-		console.log('running on port 3000')
+	// try to parse the PORT env if it exist, otherwise return NaN by using "" to make it return NaN
+	const port = parseInt(process.env.PORT || "", 10) || 3000
+	service.start(port).then(()=> {
+		console.debug(`running on port ${port}`)
 	})
 }
 
