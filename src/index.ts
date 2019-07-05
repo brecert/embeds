@@ -1,6 +1,14 @@
 import CommandClient from 'camdo'
 import * as camdo from 'camdo'
 
+
+// allow fromEntries to work on older version of node
+let fromEntries = require('object.fromentries')
+
+if (!Object.fromEntries) {
+  fromEntries.shim();
+}
+
 import * as commands from './commands'
 import * as handlers from './handlers'
 
