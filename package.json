@@ -1,10 +1,13 @@
 {
   "name": "embeds",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "the source code for the embeds server",
   "repository": "https://github.com/Brecert/embeds.git",
   "author": "brecert <11599528+Brecert@users.noreply.github.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
   "dependencies": {
     "@types/node-fetch": "^2.3.7",
     "camdo": "^0.3.1",
@@ -26,5 +29,13 @@
     "request": "^2.88.0",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.2"
-  }
+  },
+  "engines": "v12.x",
+  "keywords": [
+    "bot",
+    "commands",
+    "webservice",
+    "restana",
+    "typescript"
+  ]
 }
