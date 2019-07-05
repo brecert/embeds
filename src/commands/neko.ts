@@ -50,8 +50,6 @@ export default function(client: CommandClient) {
 	    	{ json: true }
 	    )
 
-			console.log(neko_type, img)
-
   		return {
 	      title: cat.cat,
   	    image: img.url,
