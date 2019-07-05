@@ -39,9 +39,10 @@ npm run start # or yarn start
 ```
 
 ## Todo
-- finish caching solution
 - cleanup `oldGetAll` code to use fetch or similar
 - document code
+- add types for results
+- add tests
 - add a wikipedia article getter command
 - add a command generator command
 - add a google image command
