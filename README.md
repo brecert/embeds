@@ -31,7 +31,21 @@ git clone https://github.com/Brecert/embeds.git
 
 cd embeds
 
+# fill out the config files in the config folder
+
 npm install # or yarn install, this project was made using primarily yarn!
 
 npm run start # or yarn start
 ```
+
+## Todo
+- finish caching solution
+- cleanup `oldGetAll` code to use fetch or similar
+- document code
+- add a wikipedia article getter command
+- add a command generator command
+- add a google image command
+- add a booru command
+- add an urban dictionary command
+- define feature sets for each of the commands (waiting for camdo to add this)
+- add more handlers
