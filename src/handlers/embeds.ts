@@ -5,6 +5,7 @@ import * as camdo from 'camdo'
 
 import flatCache from 'flat-cache'
 let query = require("connect-query")
+const anumargak = require('anumargak')
 
 const responseCache = flatCache.load('responseCache', '.cache')
 
@@ -15,7 +16,7 @@ export function generateURL(id: string, args: camdo.ICamdoArgument[]) {
 		}${
 			!arg.required ? '?' : ''
 		}`).join('/')
-	}`
+	}/`
 }
 
 import { html } from 'common-tags'
@@ -162,7 +163,7 @@ export function generateHTML(data: camdo.ICamdoFormat) {
 
 export default function(client: CommandClient) {
 	const service = restana({
-		server: http.createServer()
+		ignoreTrailingSlash: true
 	})
 
 	service.use(query())
@@ -174,7 +175,10 @@ export default function(client: CommandClient) {
 
 			console.log(`adding path ${url}`)
 
-			service.all(url, async (req, res) => {
+			type Request = http.IncomingMessage & restana.RequestExtensions
+			type Response = http.ServerResponse & restana.ResponseExtensions
+
+			const reuse = async (req: Request, res: Response) => {
 				let args = Object.values(req.params)
 
 				let data = responseCache.getKey(req.url!)
@@ -184,8 +188,15 @@ export default function(client: CommandClient) {
 				} else {
 					resolve(args, res, req)
 				}
-			})
+			}
 
+			service.get(url, reuse)
+
+			if(!cmd.args[cmd.args.length - 1].required) {
+				const url2 = generateURL(cmd.id, cmd.args.slice(0, -1))
+				console.log(`adding path ${url2}`)
+				service.get(url2, reuse)
+			}
 		},
 		send(data, res: http.ServerResponse & restana.ResponseExtensions, req: http.IncomingMessage & restana.RequestExtensions) {
 			let key = responseCache.getKey(req.url!)

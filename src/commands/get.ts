@@ -12,7 +12,7 @@ export default function(client: CommandClient) {
 	})
 
 	client.defineType({
-	  id: "tag_List",
+	  id: "tag_list",
 	  validate: val => val.split(',').length !== 0
 	})
 
@@ -24,23 +24,22 @@ export default function(client: CommandClient) {
 	    name: "Tag list",
 	    description: "The tags to search with",
 	    type: "tag_list",
-	    required: true
-	  }, {
-	  	id: "booru",
-	  	name: "Booru",
-	  	description: "The booru used to search",
-	  	type: "booru",
-	  	default_value: "safebooru",
-	  	required: false
+	    required: false
 	  }],
 	  async run([tags, booru]: [string, string]) {
 
-	  	const [img] = await Booru.search(booru, tags, { limit: 1, random: true })
+	  	const [img] = await Booru.search(booru || "safebooru", tags, { limit: 1, random: true })
 
 	    if(img === undefined) {
 	    	return {
 	    		title: "ERROR",
 	    		description: `there was a problem getting the image with the tags "${tags}"`
+	    	}
+	    }
+	    else if(img.file_url === null) {
+	    	return {
+	    		title: "ERROR",
+	    		description: "somehow the file_url was empty"
 	    	}
 	    }
 
@@ -50,7 +49,7 @@ export default function(client: CommandClient) {
   			} ${
   				(img as any).fav_count !== undefined ? `⭐${(img as any).fav_count}` : ""
   			}\n${
-  				img.common.tags.join(', ').substring(0,200)
+  				img.tags.join(', ').substring(0,200)
   			}`,
 	      title: img.id,
   	    image: img.file_url,
