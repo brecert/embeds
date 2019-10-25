@@ -117,6 +117,14 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+booru@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/booru/-/booru-2.0.3.tgz#948c3ae03f6295b4bfc3182e266672cd79b85d3a"
+  integrity sha512-TNzuQkaGuljppmcJ2qreDLyZQBYo11ASlr+kcH2VsryaYwAc82ECQRtCxzkiF9SXiiw7N0vWInnVz9DCRCnFLg==
+  dependencies:
+    fast-xml-parser "^3.12.17"
+    node-fetch "^2.6.0"
+
 brace-expansion@^1.1.7:
   version "1.1.11"
   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.11.tgz#3c7fcbf529d87226f3d2f52b966ff5271eb441dd"
@@ -251,6 +259,11 @@ fast-json-stable-stringify@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/fast-json-stable-stringify/-/fast-json-stable-stringify-2.0.0.tgz#d5142c0caee6b1189f87d3a76111064f86c8bbf2"
   integrity sha1-1RQsDK7msRifh9OnYREGT4bIu/I=
+
+fast-xml-parser@^3.12.17:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-3.14.0.tgz#6fc1e927d13ac2e2ff8ccc5812c4f881fbc91284"
+  integrity sha512-3SzQnPNtMVqaBVDzYqYt0BTaaLwkd45wTbsUsH1eiE9dnyc4b8mYcm1Q0Rcx9AWkeTj5UZFTTm55Io5yVWS1tg==
 
 find-my-way@^1.18.1:
   version "1.18.1"
