@@ -6,7 +6,7 @@ import * as handlers from "./handlers";
 let client = new CommandClient();
 
 async function defineCommands() {
-  return Promise.allSettled([
+  return Promise.all([
     commands.echo(client),
     commands.neko(client),
     commands.help(client),

@@ -15,10 +15,10 @@ export function generateURL(id: string, args: camdo.ICamdoArgument[]) {
 }
 
 import { html } from "common-tags";
-import { escape } from "validator";
+import validator from "validator";
 
 export function camdoNameToPropertyName(name: string, v: string | number) {
-  let escaped = escape(`${v}`);
+  let escaped = validator.escape(`${v}`);
 
   switch (name) {
     case "name":

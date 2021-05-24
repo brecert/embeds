@@ -43,7 +43,7 @@ export default function (client: CommandClient) {
       }`,
       required: false,
     }],
-    async run([neko_type]: [string]) {
+    async run([neko_type = "neko"]: [string]) {
       let [cat, img] = await oldGetAll(
         [
           `https://nekos.life/api/v2/img/${neko_type}`,

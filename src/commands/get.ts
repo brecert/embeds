@@ -4,7 +4,7 @@ import * as Booru from "booru";
 
 export default function (client: CommandClient) {
   const sfw_list = Object.values(Booru.sites).filter((b) => !b.nsfw).flatMap(
-    (b) => b.aliases
+    (b) => b.aliases,
   );
 
   client.defineType({
@@ -15,7 +15,7 @@ export default function (client: CommandClient) {
 
   client.defineType({
     id: "tag_list",
-    validate: (val) => val.split(",").length !== 0,
+    validate: (val = "") => val.split(",").length !== 0,
   });
 
   client.defineCommand({
@@ -26,6 +26,7 @@ export default function (client: CommandClient) {
       name: "Tag list",
       description: "The tags to search with",
       type: "tag_list",
+      default_value: "",
       required: false,
     }],
     async run([tags, booru]: [string, string]) {
