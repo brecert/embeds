@@ -1,22 +1,31 @@
-import CommandClient from 'camdo'
-import * as camdo from 'camdo'
+import CommandClient from "camdo";
 
-import * as commands from './commands'
-import * as handlers from './handlers'
+import * as commands from "./commands";
+import * as handlers from "./handlers";
 
-let client = new CommandClient
+let client = new CommandClient();
 
 async function defineCommands() {
-	commands.echo(client)
-	commands.neko(client)
-	commands.help(client)
+  return Promise.allSettled([
+    commands.echo(client),
+    commands.neko(client),
+    commands.help(client),
+    commands.get(client),
 
-	await commands.translate(client).catch(err => { throw new Error(`Error while defining the 'translate' command: \n    ${err}`) })
-	await commands.define(client).catch(err => { throw new Error(`Error while defining the 'define' command: \n    ${err}`) })
-	
-	commands.get(client)
+    commands.translate(client).catch((err) => {
+      throw new Error(
+        `Error while defining the 'translate' command: \n    ${err}`,
+      );
+    }),
+
+    commands.define(client).catch((err) => {
+      throw new Error(
+        `Error while defining the 'define' command: \n    ${err}`,
+      );
+    }),
+  ]);
 }
 
 defineCommands()
-	.catch(console.error)
-	.then(() => handlers.embeds(client))
+  .catch(console.error)
+  .then(() => handlers.embeds(client));

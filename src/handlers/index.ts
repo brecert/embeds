@@ -1,1 +1,1 @@
-export { default as embeds } from './embeds'
+export { default as embeds } from "./embeds";

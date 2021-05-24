@@ -1,59 +1,61 @@
-import http from 'http'
-import restana from 'restana'
-import CommandClient from 'camdo'
-import * as camdo from 'camdo'
+import http from "http";
+import restana from "restana";
+import CommandClient from "camdo";
+import * as camdo from "camdo";
 
-import flatCache from 'flat-cache'
-let query = require("connect-query")
-const anumargak = require('anumargak')
+import flatCache from "flat-cache";
+let query = require("connect-query");
 
-const responseCache = flatCache.load('responseCache', '.cache')
+const responseCache = flatCache.load("responseCache", ".cache");
 
 export function generateURL(id: string, args: camdo.ICamdoArgument[]) {
-	return `/${id}/${
-		args.map(arg => `:${
-			arg.id
-		}${
-			!arg.required ? '?' : ''
-		}`).join('/')
-	}/`
+  return `/${id}/${
+    args.map((arg) => `:${arg.id}${!arg.required ? "?" : ""}`).join("/")
+  }/`;
 }
 
-import { html } from 'common-tags'
-import { escape } from 'validator'
+import { html } from "common-tags";
+import { escape } from "validator";
 
 export function camdoNameToPropertyName(name: string, v: string | number) {
-	let escaped = escape(`${v}`)
+  let escaped = escape(`${v}`);
 
-	switch (name) {
-		case "name": return ["og:site_name", escaped]
-		case "title": return ["og:title", escaped]
-		case "description": return ["og:description", escaped]
-		case "image": return ["og:image", escaped]
-
-		case "color": return ["theme-color", `#${(v as number).toString(16)}`]
-
-		case "format": {
-			if(v === "large_image" || v === "default") {
-				return ["twitter:card", "summary_large_image"]
-			} else {
-				throw new Error(`invalid image format '${escaped}'`)
-			}
-		}
-
-		default: throw new Error(`invalid name '${name}' while converting to property names`)
-	}
+  switch (name) {
+    case "name":
+      return ["og:site_name", escaped];
+    case "title":
+      return ["og:title", escaped];
+    case "description":
+      return ["og:description", escaped];
+    case "image":
+      return ["og:image", escaped];
+    case "color":
+      return ["theme-color", `#${(v as number).toString(16)}`];
+    case "format": {
+      if (v === "large_image" || v === "default") {
+        return ["twitter:card", "summary_large_image"];
+      } else {
+        throw new Error(`invalid image format '${escaped}'`);
+      }
+    }
+    default:
+      throw new Error(
+        `invalid name '${name}' while converting to property names`,
+      );
+  }
 }
 
 export function generateHTML(data: camdo.ICamdoFormat) {
-	let escaped = Object.entries(data).map(([k, v]) => camdoNameToPropertyName(k, v))
+  let escaped = Object.entries(data).map(([k, v]) =>
+    camdoNameToPropertyName(k, v)
+  );
 
-	function getColor() {
-  	let obj = Object.fromEntries(escaped)
-  	return 'theme-color' in obj ? obj['theme-color'] : 'rgb(100,100,100,0.2)'
-	}
+  function getColor() {
+    let obj = Object.fromEntries(escaped);
+    return "theme-color" in obj ? obj["theme-color"] : "rgb(100,100,100,0.2)";
+  }
 
-	return html`
+  return html`
 		<html lang="en-us">
 			<head>
 				<meta charset="utf-8">
@@ -145,82 +147,92 @@ export function generateHTML(data: camdo.ICamdoFormat) {
 				<div class="embed-container">
 					<div class="color"></div>
 					<div class="embed">
-						${escaped.map(([k, v], i) => {
-							let name = Object.keys(data)[i]
-							switch (name) {
-								case "color": return ``
-								case "format": return ``
-								case "image": return `<img class="${name} ${data.format}" src="${v}">`
-								default: return `<div class="${name}">${v}</div>`
-							}
-						})}
+						${
+    escaped.map(([k, v], i) => {
+      let name = Object.keys(data)[i];
+      switch (name) {
+        case "color":
+          return ``;
+        case "format":
+          return ``;
+        case "image":
+          return `<img class="${name} ${data.format}" src="${v}">`;
+        default:
+          return `<div class="${name}">${v}</div>`;
+      }
+    })
+  }
 					</div>
 				</div>
 			</body>
 		</html>
-	`
+	`;
 }
 
-export default function(client: CommandClient) {
-	const service = restana({
-		ignoreTrailingSlash: true
-	})
+export default function (client: CommandClient) {
+  const service = restana({
+    ignoreTrailingSlash: true,
+  });
 
-	service.use(query())
+  service.use(query());
 
-	client.addHandler({
-		id: 'embeds',
-		event(resolve, cmd) {
-			let url = generateURL(cmd.id, cmd.args)
+  client.addHandler({
+    id: "embeds",
+    event(resolve, cmd) {
+      let url = generateURL(cmd.id, cmd.args);
 
-			console.log(`adding path ${url}`)
+      console.log(`adding path ${url}`);
 
-			type Request = http.IncomingMessage & restana.RequestExtensions
-			type Response = http.ServerResponse & restana.ResponseExtensions
+      type Request = http.IncomingMessage & restana.RequestExtensions;
+      type Response = http.ServerResponse & restana.ResponseExtensions;
 
-			const reuse = async (req: Request, res: Response) => {
-				let args = Object.values(req.params)
+      const reuse = async (req: Request, res: Response) => {
+        let args = Object.values(req.params);
 
-				let data = responseCache.getKey(req.url!)
+        let data = responseCache.getKey(req.url!);
 
-				if(data !== undefined) {
-					res.send(generateHTML(data))
-				} else {
-					resolve(args, res, req)
-				}
-			}
+        if (data !== undefined) {
+          res.send(generateHTML(data));
+        } else {
+          resolve(args, res, req);
+        }
+      };
 
-			service.get(url, reuse)
+      service.get(url, reuse);
 
-			if(!cmd.args[cmd.args.length - 1].required) {
-				const url2 = generateURL(cmd.id, cmd.args.slice(0, -1))
-				console.log(`adding path ${url2}`)
-				service.get(url2, reuse)
-			}
-		},
-		send(data, res: http.ServerResponse & restana.ResponseExtensions, req: http.IncomingMessage & restana.RequestExtensions) {
-			let key = responseCache.getKey(req.url!)
+      if (!cmd.args[cmd.args.length - 1].required) {
+        const url2 = generateURL(cmd.id, cmd.args.slice(0, -1));
+        console.log(`adding path ${url2}`);
+        service.get(url2, reuse);
+      }
+    },
+    send(
+      data,
+      res: http.ServerResponse & restana.ResponseExtensions,
+      req: http.IncomingMessage & restana.RequestExtensions,
+    ) {
+      let key = responseCache.getKey(req.url!);
 
-			// if the url hasn't be set yet and the url has a query and should be cached then cache the result
-			if(key === undefined && Object.keys((req as any).query).length !== 0) {
-				responseCache.setKey(req.url!, data)
-			}
+      // if the url hasn't be set yet and the url has a query and should be cached then cache the result
+      if (key === undefined && Object.keys((req as any).query).length !== 0) {
+        responseCache.setKey(req.url!, data);
+      }
 
-			res.send(generateHTML(data))
-		}
-	})
+      res.send(generateHTML(data));
+    },
+  });
 
-	// try to parse the PORT env if it exist, otherwise return NaN by using "" to make it return NaN
-	const port = parseInt(process.env.PORT || "", 10) || 3000
-	service.start(port).then(()=> {
-		console.debug(`running on port ${port}`)
-	})
+  // try to parse the PORT env if it exist, otherwise return NaN by using "" to make it return NaN
+  const port = parseInt(process.env.PORT || "", 10) || 3000;
+  service.start(port).then(() => {
+    console.debug(`running on port ${port}`);
+  });
 }
 
 function exitHandler(cb: (...any: any[]) => any) {
-	cb()
-	process.exit()
+  cb();
+  process.exit();
 }
 
-process.on('exit', () => exitHandler(() => responseCache.save()))
-process.on('SIGINT', () => exitHandler(() => responseCache.save()))
+process.on("exit", () => exitHandler(() => responseCache.save()));
+process.on("SIGINT", () => exitHandler(() => responseCache.save()));
